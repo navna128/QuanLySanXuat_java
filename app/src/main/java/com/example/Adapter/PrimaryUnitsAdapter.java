@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.Models.MaterialTypes;
 import com.example.Models.PrimaryUnits;
 import com.example.quanlysanxuat.R;
 
@@ -22,9 +21,18 @@ public class PrimaryUnitsAdapter extends RecyclerView.Adapter<PrimaryUnitsAdapte
 
     private List<PrimaryUnits> primaryUnitsList;
 
+    private PrimaryUnitsAdapter.onItemClickListener listener;
+
     public PrimaryUnitsAdapter(Context mContext, List<PrimaryUnits> primaryUnitsList) {
         this.mContext = mContext;
         this.primaryUnitsList = primaryUnitsList;
+    }
+
+    public interface onItemClickListener {
+        void onItemClick(int pos, View view);
+    }
+    public void setOnClickListener(PrimaryUnitsAdapter.onItemClickListener listener) {
+        this.listener = listener;
     }
 
     public void setData(List<PrimaryUnits> list){
@@ -37,7 +45,7 @@ public class PrimaryUnitsAdapter extends RecyclerView.Adapter<PrimaryUnitsAdapte
     @Override
     public PrimaryUnitsHolser onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_primary_unit, parent, false);
-        return new PrimaryUnitsHolser(view);
+        return new PrimaryUnitsHolser(view,listener);
     }
 
     @Override
@@ -62,11 +70,23 @@ public class PrimaryUnitsAdapter extends RecyclerView.Adapter<PrimaryUnitsAdapte
         private TextView tvName;
         private TextView tvDescription;
 
-        public PrimaryUnitsHolser(@NonNull View itemView) {
+        public PrimaryUnitsHolser(@NonNull View itemView, PrimaryUnitsAdapter.onItemClickListener listener) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.txtPrimaryUnitName);
             tvDescription = itemView.findViewById(R.id.txtPrimaryUnitDescription);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position, v);
+                        }
+                    }
+                }
+            });
         }
     }
 }

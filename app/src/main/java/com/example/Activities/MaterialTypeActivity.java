@@ -2,7 +2,9 @@ package com.example.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.API.ApiService;
 import com.example.Adapter.MaterialAdapter;
 import com.example.Adapter.MaterialTypeAdapter;
+import com.example.DataManager;
 import com.example.Models.MaterialTypes;
 import com.example.quanlysanxuat.R;
 
@@ -33,13 +36,20 @@ public class MaterialTypeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_mateial_type);
 
+        InitView();
+        loadData();
+        oncLick();
 
-        rcv_material_type = findViewById(R.id.rcv_material_type);
-        imgView_Add_Material_Type = findViewById(R.id.imgView_Add_Material_Type);
-        btn_mat_type_backToHome = findViewById(R.id.btn_mat_type_backToHome);
 
+
+
+
+    }
+
+    private void oncLick() {
         imgView_Add_Material_Type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,8 +64,18 @@ public class MaterialTypeActivity extends AppCompatActivity {
                 finish();
             }
         });
+        materialTypeAdapter.setOnClickListener(new MaterialTypeAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos, View view) {
+                DataManager.selectedMaterialType = materialTypesList.get(pos);
+                Log.e("mat click on", "onItemClick: "+ DataManager.selectedMaterialType.getTypeName() );
+                startActivity(new Intent(getApplicationContext(),DetailMaterialTypeActivity.class));
+                finish();
+            }
+        });
+    }
 
-
+    private void loadData() {
         materialTypesList = new ArrayList<>();
         materialTypeAdapter = new MaterialTypeAdapter(this, materialTypesList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -75,5 +95,11 @@ public class MaterialTypeActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void InitView() {
+        rcv_material_type = findViewById(R.id.rcv_material_type);
+        imgView_Add_Material_Type = findViewById(R.id.imgView_Add_Material_Type);
+        btn_mat_type_backToHome = findViewById(R.id.btn_mat_type_backToHome);
     }
 }

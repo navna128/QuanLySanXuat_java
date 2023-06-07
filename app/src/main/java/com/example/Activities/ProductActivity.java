@@ -3,6 +3,7 @@ package com.example.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.API.ApiService;
 import com.example.Adapter.MaterialAdapter;
 import com.example.Adapter.ProductAdapter;
+import com.example.DataManager;
 import com.example.Models.Materials;
 import com.example.Models.Products;
 import com.example.quanlysanxuat.R;
@@ -33,6 +35,7 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_product);
 
 
@@ -55,6 +58,15 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),AddProduct.class));
+                finish();
+            }
+        });
+
+        productAdapter.setOnClickListener(new ProductAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos, View view) {
+                DataManager.selectedProduct=productsList.get(pos);
+                startActivity(new Intent(getApplicationContext(),DetailProductActivity.class));
                 finish();
             }
         });

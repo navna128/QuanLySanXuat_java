@@ -6,13 +6,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.API.ApiService;
 import com.example.Adapter.MaterialTypeAdapter;
 import com.example.Adapter.PrimaryUnitsAdapter;
+import com.example.DataManager;
 import com.example.Models.MaterialTypes;
 import com.example.Models.PrimaryUnits;
 import com.example.quanlysanxuat.R;
@@ -35,6 +38,7 @@ public class PrimaryUnitsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_primary_units);
 
 
@@ -61,6 +65,15 @@ public class PrimaryUnitsActivity extends AppCompatActivity {
                 finish();
             }
         });
+        primaryUnitsAdapter.setOnClickListener(new PrimaryUnitsAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos, View view) {
+                DataManager.selectedPrimaryUnit = primaryUnitsList.get(pos);
+                Log.e("mat click", "onItemClick: "+ DataManager.selectedPrimaryUnit.getPrimaryUnitName() );
+                startActivity(new Intent(getApplicationContext(),DetailPrimaryUnitActivity.class));
+                finish();
+            }
+        });
     }
 
     private void loadData() {
@@ -76,6 +89,7 @@ public class PrimaryUnitsActivity extends AppCompatActivity {
                 if (response.body() != null){
                     primaryUnitsList.addAll(response.body());
                     primaryUnitsAdapter.setData(primaryUnitsList);
+                    Log.e("primaryUnitsList", "onResponse: "+primaryUnitsList.size() );
                 }
             }
             @Override

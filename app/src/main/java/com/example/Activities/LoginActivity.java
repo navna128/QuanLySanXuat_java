@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.API.ApiService;
+import com.example.DataManager;
 import com.example.Models.Users;
 import com.example.quanlysanxuat.R;
 
@@ -20,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +55,12 @@ public class LoginActivity extends AppCompatActivity {
                 }else if (pass.length() == 0){
                     password.setError("Mật khẩu không được để trống!");
                 }else{
-                    ApiService.api.Login(name,pass).enqueue(new Callback<Boolean>() {
+                    ApiService.api.Login(name,pass).enqueue(new Callback<Users>() {
                         @Override
-                        public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                            if (Boolean.TRUE.equals(response.body())){
+                        public void onResponse(Call<Users> call, Response<Users> response) {
+                            if (response.body() != null){
+                                DataManager.currentUser = response.body();
+                                Log.e("TAG", "currenUser: "+ DataManager.currentUser.getUsername());
                                 startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                                 finish();
                             }
@@ -65,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<Boolean> call, Throwable t) {
+                        public void onFailure(Call<Users> call, Throwable t) {
 
                         }
                     });

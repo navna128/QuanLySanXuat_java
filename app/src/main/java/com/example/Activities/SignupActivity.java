@@ -3,6 +3,7 @@ package com.example.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_signup);
 
         btn_backToLogin = findViewById(R.id.btn_backToLogin);
@@ -44,15 +46,15 @@ public class SignupActivity extends AppCompatActivity {
         btn_signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = edt_Username.getText().toString();
+                String userName = edt_Username.getText().toString();
                 String pass = edt_password.getText().toString();
-                if (username.length() == 0 || pass.length() == 0) {
+                if (userName.length() == 0 || pass.length() == 0) {
                     Toast.makeText(SignupActivity.this, "Các trường không được để trống!", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
 
-                    ApiService.api.checkUsernameExist(username).enqueue(new Callback<Boolean>() {
+                    ApiService.api.checkUsernameExist(userName).enqueue(new Callback<Boolean>() {
                         @Override
                         public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                             if (Boolean.TRUE.equals(response.body())) {
@@ -60,7 +62,7 @@ public class SignupActivity extends AppCompatActivity {
                             }else
                             {
 
-                                Users user = new Users(username,pass,false);
+                                Users user = new Users(userName,pass,false);
                                 Toast.makeText(SignupActivity.this,user.getUsername()+"   "+user.getUserPassword(), Toast.LENGTH_SHORT).show();
                                 ApiService.api.PostUser(user).enqueue(new Callback<Users>() {
                                     @Override

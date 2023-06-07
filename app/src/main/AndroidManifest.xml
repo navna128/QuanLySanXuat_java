@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -43,6 +44,20 @@
         <activity android:name="com.example.Activities.AddMaterialType"
             android:exported="true"/>
         <activity android:name="com.example.Activities.AddPrimaryUnit"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.AddProduct"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.AddResource"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.DetailMaterialActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.DetailMaterialTypeActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.DetailPrimaryUnitActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.DetailProductActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.DetailResourceActivity"
             android:exported="true"/>
         <activity
             android:name="com.example.Activities.LoginActivity"

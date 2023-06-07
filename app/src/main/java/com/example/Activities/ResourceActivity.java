@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.API.ApiService;
 import com.example.Adapter.MaterialTypeAdapter;
 import com.example.Adapter.ResourceAdapter;
+import com.example.DataManager;
 import com.example.Models.MaterialTypes;
 import com.example.Models.Resources;
 import com.example.quanlysanxuat.R;
@@ -33,6 +35,7 @@ public class ResourceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_resource);
 
         initView();
@@ -53,6 +56,15 @@ public class ResourceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),AddResource.class));
+                finish();
+            }
+        });
+
+        resourceAdapter.setOnClickListener(new ResourceAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos, View view) {
+                DataManager.selectedResource = resourcesList.get(pos);
+                startActivity(new Intent(getApplicationContext(),DetailResourceActivity.class));
                 finish();
             }
         });

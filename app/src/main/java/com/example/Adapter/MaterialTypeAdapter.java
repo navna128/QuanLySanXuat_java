@@ -19,12 +19,18 @@ public class MaterialTypeAdapter extends RecyclerView.Adapter<MaterialTypeAdapte
     private Context mContext;
 
     private List<MaterialTypes> materialTypesList;
+    private MaterialTypeAdapter.onItemClickListener listener;
 
     public MaterialTypeAdapter(Context mContext, List<MaterialTypes> materialTypesList) {
         this.mContext = mContext;
         this.materialTypesList = materialTypesList;
     }
-
+    public interface onItemClickListener {
+        void onItemClick(int pos, View view);
+    }
+    public void setOnClickListener(MaterialTypeAdapter.onItemClickListener listener) {
+        this.listener = listener;
+    }
     public void setData(List<MaterialTypes> list){
         this.materialTypesList = list;
         notifyDataSetChanged();
@@ -34,7 +40,7 @@ public class MaterialTypeAdapter extends RecyclerView.Adapter<MaterialTypeAdapte
     @Override
     public MaterialTypeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_material_type, parent, false);
-        return new MaterialTypeHolder(view);
+        return new MaterialTypeHolder(view,listener);
     }
 
     @Override
@@ -59,11 +65,23 @@ public class MaterialTypeAdapter extends RecyclerView.Adapter<MaterialTypeAdapte
         private TextView tvName;
         private TextView tvDescription;
 
-        public MaterialTypeHolder(@NonNull View itemView) {
+        public MaterialTypeHolder(@NonNull View itemView, MaterialTypeAdapter.onItemClickListener listener) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.txtMaterialTypeName);
             tvDescription = itemView.findViewById(R.id.txtMaterialTypeDescription);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position, v);
+                        }
+                    }
+                }
+            });
         }
     }
 }

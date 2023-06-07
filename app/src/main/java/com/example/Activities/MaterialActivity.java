@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,7 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.API.ApiService;
 import com.example.Adapter.MaterialAdapter;
+import com.example.DataManager;
+import com.example.Models.MaterialTypes;
 import com.example.Models.Materials;
+import com.example.Models.PrimaryUnits;
+import com.example.Models.Products;
 import com.example.quanlysanxuat.R;
 
 import java.util.ArrayList;
@@ -31,10 +37,12 @@ public class MaterialActivity extends AppCompatActivity {
     private MaterialAdapter materialAdapter;
     private List<Materials> materials;
     private ImageView btn_mat_backToHome, imgView_Add_Material;
+    private TextView txtUserName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_material);
 
 
@@ -59,43 +67,77 @@ public class MaterialActivity extends AppCompatActivity {
                 finish();
             }
         });
+        materialAdapter.setOnClickListener(new MaterialAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int pos, View view) {
+                DataManager.selectedMaterial = materials.get(pos);
+                Log.e("mat click on", "onItemClick: "+ DataManager.selectedMaterial.getMaterialDescription() );
+                startActivity(new Intent(getApplicationContext(),DetailMaterialActivity.class));
+                finish();
+            }
+        });
     }
+
 
     private void loadData() {
 
         ApiService.api.GetMaterials().enqueue(new Callback<List<Materials>>() {
             @Override
             public void onResponse(Call<List<Materials>> call, Response<List<Materials>> response) {
-                materials.addAll(response.body());
-                materialAdapter.setData(materials);
+                if (response.body() != null){
+                    materials.addAll(response.body());
+                    materialAdapter.setData(materials);
+                }
             }
-
             @Override
             public void onFailure(Call<List<Materials>> call, Throwable t) {
+            }
+        });
+        ApiService.api.GetMaterialTypes().enqueue(new Callback<List<MaterialTypes>>() {
+            @Override
+            public void onResponse(Call<List<MaterialTypes>> call, Response<List<MaterialTypes>> response) {
+                if (response.body() != null){
+                    DataManager.materialTypesList.clear();
+                    DataManager.materialTypesList.addAll(response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<MaterialTypes>> call, Throwable t) {
 
             }
         });
 
-        /*ApiService.api.GetMaterials().enqueue(new Callback<List<Materials>>() {
+        ApiService.api.GetPrimaryUnits().enqueue(new Callback<List<PrimaryUnits>>() {
             @Override
-            public void onResponse(Call<List<Materials>> call, Response<List<Materials>> response) {
+            public void onResponse(Call<List<PrimaryUnits>> call, Response<List<PrimaryUnits>> response) {
                 if (response.body() != null){
-                    Toast.makeText(MaterialActivity.this,response.body().size() , Toast.LENGTH_SHORT).show();
-                    if (response.body().size() > 0){
-                        materials.addAll(response.body());
-                        materialAdapter.setData(materials);
-                    }else {
-                        Toast.makeText(MaterialActivity.this, "Không có vật liệu", Toast.LENGTH_SHORT).show();
-                    }
+                    DataManager.primaryUnitsList.clear();
+                    DataManager.primaryUnitsList.addAll(response.body());
                 }
-                Toast.makeText(MaterialActivity.this, "Không có vật liệu", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(Call<List<Materials>> call, Throwable t) {
-                Toast.makeText(MaterialActivity.this, "Không có vật liệu", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<PrimaryUnits>> call, Throwable t) {
+
             }
-        });*/
+        });
+
+        ApiService.api.GetProducts().enqueue(new Callback<List<Products>>() {
+            @Override
+            public void onResponse(Call<List<Products>> call, Response<List<Products>> response) {
+                if (response.body() != null){
+                    DataManager.productsList.clear();
+                    DataManager.productsList.addAll(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Products>> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
     private void setUpView() {
@@ -110,5 +152,6 @@ public class MaterialActivity extends AppCompatActivity {
         imgView_Add_Material = findViewById(R.id.imgView_Add_Material);
         rcv_material = findViewById(R.id.rcv_material);
         btn_mat_backToHome = findViewById(R.id.btn_mat_backToHome);
+        txtUserName = findViewById(R.id.txtUserName);
     }
 }

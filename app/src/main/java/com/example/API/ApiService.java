@@ -18,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -38,7 +39,7 @@ public interface ApiService {
 
     //tài khoản
     @GET("api/Users/Login")
-    Call<Boolean> Login(@Query("username") String username, @Query("password") String password);
+    Call<Users> Login(@Query("username") String username, @Query("password") String password);
 
     @GET("api/Users/checkUsernameExist")
     Call<Boolean> checkUsernameExist(@Query("username") String username);
@@ -58,13 +59,40 @@ public interface ApiService {
     @GET("api/PrimaryUnits/GetPrimaryUnits")
     Call<List<PrimaryUnits>> GetPrimaryUnits();
 
-
     @GET("api/Resources/GetResources")
     Call<List<Resources>> GetResources();
 
     @GET("api/Products/GetProducts")
     Call<List<Products>> GetProducts();
 
+    @POST("api/Materials/PostMaterial")
+    Call<Materials> PostMaterial(@Body Materials materials);
 
+    @POST("api/MaterialTypes/PostMaterialType")
+    Call<MaterialTypes> PostMaterialType(@Body MaterialTypes materialTypes);
+
+    @POST("api/PrimaryUnits/PostPrimaryUnit")
+    Call<PrimaryUnits> PostPrimaryUnit(@Body PrimaryUnits primaryUnits);
+
+    @POST("api/Products/PostProduct")
+    Call<Products> PostProduct(@Body Products products);
+
+    @POST("api/Resources/PostResource")
+    Call<Resources> PostResource(@Body Resources resources);
+
+    @DELETE("api/Materials/DeleteMaterial")
+    Call<Materials> DeleteMaterial(@Query("id") String id);
+
+    @DELETE("api/MaterialTypes/DeleteMaterialType")
+    Call<MaterialTypes> DeleteMaterialType(@Query("id") String id);
+
+    @DELETE("api/PrimaryUnits/DeletePrimaryUnit")
+    Call<PrimaryUnits> DeletePrimaryUnit(@Query("id") String id);
+
+    @DELETE("api/Products/DeleteProduct")
+    Call<Products> DeleteProduct(@Query("id") String id);
+
+    @DELETE("api/Resources/DeleteResource")
+    Call<Resources> DeleteResource(@Query("id") String id);
 
 }

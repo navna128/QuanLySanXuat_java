@@ -1,6 +1,7 @@
 package com.example.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +21,18 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.Materi
 
     private Context mContext;
     private List<Materials> materialsList;
+    private MaterialAdapter.onItemClickListener listener;
 
     public MaterialAdapter(Context mContext, List<Materials> materials) {
         this.mContext = mContext;
         this.materialsList = materials;
     }
-
+    public interface onItemClickListener {
+        void onItemClick(int pos, View view);
+    }
+    public void setOnClickListener(MaterialAdapter.onItemClickListener listener) {
+        this.listener = listener;
+    }
     public void setData(List<Materials> list){
         this.materialsList = list;
         notifyDataSetChanged();
@@ -36,16 +43,21 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.Materi
     public MaterialHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_material, parent, false);
 
-        return new MaterialHolder(view);
+        return new MaterialHolder(view,listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MaterialHolder holder, int position) {
         Materials materials = materialsList.get(position);
+
         if (materials == null){
             return;
         }
-        Glide.with(mContext).load(materials.getMaterialIMG()).into(holder.imgmaterial);
+        if (materials.getMaterialIMG() != null){
+            if (materials.getMaterialIMG().length() > 0){
+                Glide.with(mContext).load(materials.getMaterialIMG()).into(holder.imgmaterial);
+            }
+        }
         holder.tvName.setText(materials.getMaterialName());
         holder.tvQuantity.setText((materials.getPrimaryQuantity()+""));
     }
@@ -62,12 +74,24 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.Materi
         private ImageView imgmaterial;
         private TextView tvName;
         private TextView tvQuantity;
-        public MaterialHolder(@NonNull View itemView) {
+        public MaterialHolder(@NonNull View itemView,MaterialAdapter.onItemClickListener listener) {
             super(itemView);
 
             imgmaterial = itemView.findViewById(R.id.imgMaterial);
             tvName = itemView.findViewById(R.id.txtMaterialName);
             tvQuantity = itemView.findViewById(R.id.txtMaterialQuantity);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position, v);
+                        }
+                    }
+                }
+            });
         }
     }
 }

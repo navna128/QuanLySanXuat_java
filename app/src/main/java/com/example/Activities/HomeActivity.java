@@ -9,15 +9,30 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.example.API.ApiService;
+import com.example.DataManager;
+import com.example.Models.Materials;
 import com.example.quanlysanxuat.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeActivity extends AppCompatActivity {
-    private TextView txtUserName;
+    private TextView txtUserName, textViewNumInProcess, textViewNumOutProcess;
     private CardView CardViewMaterial;
     private CardView CardViewPrimaryUnit;
     private CardView CardViewMaterialType;
     private CardView CardViewProduct;
     private CardView CardViewResource;
+
+
+
+    private List<Materials> materialsList;
+    private int countIn, countOut;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +40,37 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         initView();
+        loadData();
         onClick();
+
+    }
+
+    private void loadData() {
+        txtUserName.setText(DataManager.currentUser.getUsername());
+        materialsList = new ArrayList<>();
+        ApiService.api.GetMaterials().enqueue(new Callback<List<Materials>>() {
+            @Override
+            public void onResponse(Call<List<Materials>> call, Response<List<Materials>> response) {
+                if(response.body() != null){
+                    materialsList.addAll(response.body());
+
+                    for (int i = 0 ; i < materialsList.size() ; i++){
+                        if (materialsList.get(i).isMaterialStatus()){
+                            countIn++;
+                        }
+                        else countOut++;
+                    }
+                }
+                textViewNumInProcess.setText(Integer.valueOf(countIn).toString());
+                textViewNumOutProcess.setText(Integer.valueOf(countOut).toString());
+            }
+
+            @Override
+            public void onFailure(Call<List<Materials>> call, Throwable t) {
+
+            }
+        });
+
 
     }
 
@@ -74,5 +119,7 @@ public class HomeActivity extends AppCompatActivity {
         CardViewPrimaryUnit = findViewById(R.id.CardViewPrimaryUnit);
         CardViewProduct = findViewById(R.id.CardViewProduct);
         CardViewResource = findViewById(R.id.CardViewResource);
+        textViewNumInProcess = findViewById(R.id.textViewNumInProcess);
+        textViewNumOutProcess = findViewById(R.id.textViewNumOutProcess);
     }
 }
