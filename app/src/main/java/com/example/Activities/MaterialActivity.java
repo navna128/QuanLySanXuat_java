@@ -140,9 +140,6 @@ public class MaterialActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
     private void setUpView() {
         if (DataManager.materialsInProcessList.size() == 0 && DataManager.materialsOutProcessList.size() == 0){
             for (int i = 0; i < DataManager.materialsList.size(); i++){

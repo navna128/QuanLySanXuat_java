@@ -49,7 +49,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     @Override
     public void onBindViewHolder(@NonNull ProductHolder holder, int position) {
         Products products = productsList.get(position);
-        Log.e("products", "onBindViewHolder: "+products.getProductIMG() );
         if (products == null){
             return;
         }

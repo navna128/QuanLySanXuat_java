@@ -32,8 +32,9 @@ import retrofit2.Response;
 
 public class DetailMaterialActivity extends AppCompatActivity {
     private TextView txtView_detail_mat_id, txtView_detail_mat_name, txtView_detail_mat_description, txtView_detail_mat_quantity, txtView_detail_mat_status, txtView_detail_mat_unit, txtView_detail_mat_product, txtView_detail_mat_type;
-    private Button btn_detail_delete_mat, btn_detail_go_to_edit_mat;
+    private Button btn_detail_delete_mat, btn_detail_go_to_edit_mat, btn_track;
     private ImageView imgView_detail_mat_image, imgView_detail_back_to_mat;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +100,69 @@ public class DetailMaterialActivity extends AppCompatActivity {
                 finish();
             }
         });
+        if (DataManager.selectedMaterial.isMaterialStatus()){
+            btn_track.setText("Track out");
+        }
+        else btn_track.setText("Track in");
+        btn_track.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Materials materials = DataManager.selectedMaterial;
+                if (DataManager.selectedMaterial.isMaterialStatus()){
+                    materials.setMaterialStatus(false);
+                    ApiService.api.PutMaterials(materials.getIdMaterial(),materials).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()){
+                                DataManager.selectedMaterial = materials;
+                                for (int i = 0 ; i < DataManager.materialsList.size() ; i++){
+                                    if (DataManager.materialsList.get(i).getIdMaterial() == materials.getIdMaterial()){
+                                        DataManager.materialsList.set(i,materials);
+                                        DataManager.materialsInProcessList.remove(materials);
+                                        DataManager.materialsOutProcessList.add(materials);
+                                    }
+                                }
+                                startActivity(new Intent(getApplicationContext(), DetailMaterialActivity.class));
+                                finish();
+                                Toast.makeText(DetailMaterialActivity.this, "Vật liệu đã ra khỏi quy trình sản xuất", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+
+                        }
+                    });
+                }
+                else {
+                    materials.setMaterialStatus(true);
+                    ApiService.api.PutMaterials(materials.getIdMaterial(),materials).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()){
+                                DataManager.selectedMaterial = materials;
+                                for (int i = 0 ; i < DataManager.materialsList.size() ; i++){
+                                    if (DataManager.materialsList.get(i).getIdMaterial() == materials.getIdMaterial()){
+                                        DataManager.materialsList.set(i,materials);
+                                        DataManager.materialsOutProcessList.remove(materials);
+                                        DataManager.materialsInProcessList.add(materials);
+                                    }
+                                }
+                                startActivity(new Intent(getApplicationContext(), DetailMaterialActivity.class));
+                                finish();
+                                Toast.makeText(DetailMaterialActivity.this, "Vật liệu đã vào quy trình sản xuất", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+        });
+
     }
 
     private void setData() {
@@ -141,6 +205,10 @@ public class DetailMaterialActivity extends AppCompatActivity {
         if (DataManager.selectedMaterial.getMaterialIMG().length() >0) {
             Glide.with(this).load(DataManager.selectedMaterial.getMaterialIMG()).override(400, 400).into(imgView_detail_mat_image);
         }
+
+
+
+
     }
 
     private void InitView() {
@@ -156,5 +224,6 @@ public class DetailMaterialActivity extends AppCompatActivity {
         btn_detail_go_to_edit_mat = findViewById(R.id.btn_detail_go_to_edit_mat);
         imgView_detail_mat_image = findViewById(R.id.imgView_detail_mat_image);
         imgView_detail_back_to_mat = findViewById(R.id.imgView_detail_back_to_mat);
+        btn_track = findViewById(R.id.btn_track);
     }
 }
