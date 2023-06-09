@@ -48,7 +48,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/edt_search_mat"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="16dp"

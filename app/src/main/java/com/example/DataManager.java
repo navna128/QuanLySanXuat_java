@@ -26,7 +26,14 @@ public class DataManager {
     public static Products selectedProduct = new Products();
     public static Resources selectedResource = new Resources();
 
+    public static List<Materials> materialsList = new ArrayList<>();
+    public static List<Materials> materialsInProcessList = new ArrayList<>();
+    public static List<Materials> materialsOutProcessList = new ArrayList<>();
     public static  List<MaterialTypes> materialTypesList = new ArrayList<>();
     public static  List<PrimaryUnits> primaryUnitsList = new ArrayList<>();
     public static  List<Products> productsList = new ArrayList<>();
+    public static List<Resources> resourcesList = new ArrayList<>();
+    public static int process = 0;
+    public static int countIn = 0;
+    public static int countOut = 0;
 }

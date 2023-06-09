@@ -59,14 +59,17 @@ public class DetailMaterialTypeActivity extends AppCompatActivity {
                                 ApiService.api.DeleteMaterialType(DataManager.selectedMaterialType.getIdType()).enqueue(new Callback<MaterialTypes>() {
                                     @Override
                                     public void onResponse(Call<MaterialTypes> call, Response<MaterialTypes> response) {
+                                        if(response.isSuccessful()){
+                                            DataManager.materialTypesList.remove(DataManager.selectedMaterialType);
+                                            startActivity(new Intent(getApplicationContext(),MaterialTypeActivity.class));
+                                            finish();
+                                        }
                                     }
 
                                     @Override
                                     public void onFailure(Call<MaterialTypes> call, Throwable t) {
                                     }
                                 });
-                                startActivity(new Intent(getApplicationContext(),MaterialTypeActivity.class));
-                                finish();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -76,6 +79,13 @@ public class DetailMaterialTypeActivity extends AppCompatActivity {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+        btn_detail_go_to_edit_mat_type.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),EditMaterialTypeActvity.class));
+                finish();
             }
         });
     }

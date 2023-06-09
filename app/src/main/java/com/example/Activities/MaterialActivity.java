@@ -2,10 +2,13 @@ package com.example.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,9 +38,15 @@ import retrofit2.Response;
 public class MaterialActivity extends AppCompatActivity {
     private RecyclerView rcv_material;
     private MaterialAdapter materialAdapter;
-    private List<Materials> materials;
     private ImageView btn_mat_backToHome, imgView_Add_Material;
-    private TextView txtUserName;
+    private EditText edt_search_mat;
+    private List<Materials> allMaterials;
+    private List<Materials> InProcessMaterials;
+    private List<Materials> OutProcessMaterials;
+
+    private List<Materials> All = new ArrayList<>();
+    private List<Materials> InProcess = new ArrayList<>();
+    private List<Materials> OutProcess = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,10 +54,11 @@ public class MaterialActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_material);
 
-
+        All=DataManager.materialsList;
+        InProcess = DataManager.materialsInProcessList;
+        OutProcess = DataManager.materialsOutProcessList;
         initView();
         setUpView();
-        loadData();
         onClick();
     }
 
@@ -70,88 +80,105 @@ public class MaterialActivity extends AppCompatActivity {
         materialAdapter.setOnClickListener(new MaterialAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int pos, View view) {
-                DataManager.selectedMaterial = materials.get(pos);
-                Log.e("mat click on", "onItemClick: "+ DataManager.selectedMaterial.getMaterialDescription() );
-                startActivity(new Intent(getApplicationContext(),DetailMaterialActivity.class));
-                finish();
+                Log.e("TAG", "onItemClick: " + All.size());
+                if (DataManager.process == 0){
+                    DataManager.selectedMaterial = All.get(pos);
+                    startActivity(new Intent(getApplicationContext(),DetailMaterialActivity.class));
+                    finish();
+                } else if(DataManager.process == 1){
+                    DataManager.selectedMaterial = InProcess.get(pos);
+                    startActivity(new Intent(getApplicationContext(),DetailMaterialActivity.class));
+                    finish();
+                } else if(DataManager.process == 2){
+                    DataManager.selectedMaterial = OutProcess.get(pos);
+                    startActivity(new Intent(getApplicationContext(),DetailMaterialActivity.class));
+                    finish();
+                }
+
+            }
+        });
+
+        edt_search_mat.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String matNameSearch = edt_search_mat.getText().toString();
+                allMaterials = new ArrayList<>();
+                InProcessMaterials = new ArrayList<>();
+                OutProcessMaterials = new ArrayList<>();
+                if (DataManager.process == 0){
+                    for (int i = 0; i < DataManager.materialsList.size(); i++){
+                        if (DataManager.materialsList.get(i).getMaterialName().toLowerCase().contains(matNameSearch.toLowerCase())){
+                            allMaterials.add(DataManager.materialsList.get(i));
+                        }
+                    }
+                    All = allMaterials;
+                    materialAdapter.setData(All);
+                } else if (DataManager.process == 1) {
+                    for (int i = 0; i < DataManager.materialsInProcessList.size(); i++){
+                        if (DataManager.materialsInProcessList.get(i).getMaterialName().toLowerCase().contains(matNameSearch.toLowerCase())){
+                            InProcessMaterials.add(DataManager.materialsInProcessList.get(i));
+                        }
+                    }
+                    InProcess = InProcessMaterials;
+                    materialAdapter.setData(InProcess);
+                } else if(DataManager.process == 2){
+                    for (int i = 0; i < DataManager.materialsInProcessList.size(); i++){
+                        if (DataManager.materialsInProcessList.get(i).getMaterialName().toLowerCase().contains(matNameSearch.toLowerCase())){
+                            OutProcessMaterials.add(DataManager.materialsInProcessList.get(i));
+                        }
+                    }
+                    OutProcess = OutProcessMaterials;
+                    materialAdapter.setData(OutProcess);
+                }
+
             }
         });
     }
 
 
-    private void loadData() {
-
-        ApiService.api.GetMaterials().enqueue(new Callback<List<Materials>>() {
-            @Override
-            public void onResponse(Call<List<Materials>> call, Response<List<Materials>> response) {
-                if (response.body() != null){
-                    materials.addAll(response.body());
-                    materialAdapter.setData(materials);
-                }
-            }
-            @Override
-            public void onFailure(Call<List<Materials>> call, Throwable t) {
-            }
-        });
-        ApiService.api.GetMaterialTypes().enqueue(new Callback<List<MaterialTypes>>() {
-            @Override
-            public void onResponse(Call<List<MaterialTypes>> call, Response<List<MaterialTypes>> response) {
-                if (response.body() != null){
-                    DataManager.materialTypesList.clear();
-                    DataManager.materialTypesList.addAll(response.body());
-                }
-            }
-            @Override
-            public void onFailure(Call<List<MaterialTypes>> call, Throwable t) {
-
-            }
-        });
-
-        ApiService.api.GetPrimaryUnits().enqueue(new Callback<List<PrimaryUnits>>() {
-            @Override
-            public void onResponse(Call<List<PrimaryUnits>> call, Response<List<PrimaryUnits>> response) {
-                if (response.body() != null){
-                    DataManager.primaryUnitsList.clear();
-                    DataManager.primaryUnitsList.addAll(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PrimaryUnits>> call, Throwable t) {
-
-            }
-        });
-
-        ApiService.api.GetProducts().enqueue(new Callback<List<Products>>() {
-            @Override
-            public void onResponse(Call<List<Products>> call, Response<List<Products>> response) {
-                if (response.body() != null){
-                    DataManager.productsList.clear();
-                    DataManager.productsList.addAll(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Products>> call, Throwable t) {
-
-            }
-        });
-
-
-    }
 
     private void setUpView() {
-            materials = new ArrayList<>();
-            materialAdapter = new MaterialAdapter(this, materials);
+        if (DataManager.materialsInProcessList.size() == 0 && DataManager.materialsOutProcessList.size() == 0){
+            for (int i = 0; i < DataManager.materialsList.size(); i++){
+                if (DataManager.materialsList.get(i).isMaterialStatus()){
+                    DataManager.materialsInProcessList.add(DataManager.materialsList.get(i));
+                }
+                else DataManager.materialsOutProcessList.add(DataManager.materialsList.get(i));
+            }
+        }
+        if (DataManager.process == 0){
+            materialAdapter = new MaterialAdapter(this, DataManager.materialsList);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             rcv_material.setLayoutManager(linearLayoutManager);
             rcv_material.setAdapter(materialAdapter);
+            materialAdapter.setData(DataManager.materialsList);
+        } else if (DataManager.process == 1) {
+            materialAdapter = new MaterialAdapter(this, DataManager.materialsInProcessList);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rcv_material.setLayoutManager(linearLayoutManager);
+            rcv_material.setAdapter(materialAdapter);
+            materialAdapter.setData(DataManager.materialsInProcessList);
+        } else if (DataManager.process == 2) {
+            materialAdapter = new MaterialAdapter(this, DataManager.materialsOutProcessList);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            rcv_material.setLayoutManager(linearLayoutManager);
+            rcv_material.setAdapter(materialAdapter);
+            materialAdapter.setData(DataManager.materialsOutProcessList);
+        }
+
+
     }
 
     private void initView() {
         imgView_Add_Material = findViewById(R.id.imgView_Add_Material);
         rcv_material = findViewById(R.id.rcv_material);
         btn_mat_backToHome = findViewById(R.id.btn_mat_backToHome);
-        txtUserName = findViewById(R.id.txtUserName);
+        edt_search_mat = findViewById(R.id.edt_search_mat);
     }
 }

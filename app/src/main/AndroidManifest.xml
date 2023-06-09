@@ -8,6 +8,7 @@
 
     <application
         android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -58,6 +59,16 @@
         <activity android:name="com.example.Activities.DetailProductActivity"
             android:exported="true"/>
         <activity android:name="com.example.Activities.DetailResourceActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.EditMaterialActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.EditMaterialTypeActvity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.EditPrimaryUnitActivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.EditProductAvtivity"
+            android:exported="true"/>
+        <activity android:name="com.example.Activities.EditResourceActivity"
             android:exported="true"/>
         <activity
             android:name="com.example.Activities.LoginActivity"

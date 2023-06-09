@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.API.ApiService;
+import com.example.DataManager;
 import com.example.Models.PrimaryUnits;
 import com.example.Models.Resources;
 import com.example.quanlysanxuat.R;
@@ -59,6 +60,7 @@ public class AddResource extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Resources> call, Response<Resources> response) {
                         if (response.body()!=null) {
+                            DataManager.resourcesList.add(resources);
                             startActivity(new Intent(getApplicationContext(),ResourceActivity.class));
                             finish();
                             Toast.makeText(getApplicationContext(), "Thêm thành công", Toast.LENGTH_LONG).show();

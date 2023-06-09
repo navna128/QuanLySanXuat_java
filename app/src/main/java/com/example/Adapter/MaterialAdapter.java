@@ -53,13 +53,13 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.Materi
         if (materials == null){
             return;
         }
-        if (materials.getMaterialIMG() != null){
-            if (materials.getMaterialIMG().length() > 0){
-                Glide.with(mContext).load(materials.getMaterialIMG()).into(holder.imgmaterial);
-            }
-        }
         holder.tvName.setText(materials.getMaterialName());
         holder.tvQuantity.setText((materials.getPrimaryQuantity()+""));
+        if (materials.getMaterialIMG()!= null){
+            if (materials.getMaterialIMG().length() > 0){
+                Glide.with(mContext).load(materials.getMaterialIMG()).into(holder.imageView);
+            }
+        }
     }
     @Override
     public int getItemCount() {
@@ -71,15 +71,17 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.Materi
 
     public class MaterialHolder extends RecyclerView.ViewHolder{
 
-        private ImageView imgmaterial;
+
         private TextView tvName;
         private TextView tvQuantity;
+        private ImageView imageView;
         public MaterialHolder(@NonNull View itemView,MaterialAdapter.onItemClickListener listener) {
             super(itemView);
 
-            imgmaterial = itemView.findViewById(R.id.imgMaterial);
+
             tvName = itemView.findViewById(R.id.txtMaterialName);
             tvQuantity = itemView.findViewById(R.id.txtMaterialQuantity);
+            imageView = itemView.findViewById(R.id.imgMaterial);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

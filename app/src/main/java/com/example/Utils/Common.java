@@ -8,5 +8,5 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class Common {
-    public static String baseUrl = "https://talltealboard92.conveyor.cloud/";
+    public static String baseUrl = "https://rightsagebox35.conveyor.cloud/";
 }

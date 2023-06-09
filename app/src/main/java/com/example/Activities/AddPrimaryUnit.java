@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.API.ApiService;
+import com.example.DataManager;
 import com.example.Models.PrimaryUnits;
 import com.example.quanlysanxuat.R;
 
@@ -35,7 +36,6 @@ public class AddPrimaryUnit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.add_primary_unit);
-
         initView();
         onClick();
 
@@ -64,6 +64,7 @@ public class AddPrimaryUnit extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<PrimaryUnits> call, Response<PrimaryUnits> response) {
                         if (response.body()!=null) {
+                            DataManager.primaryUnitsList.add(primaryUnits);
                             startActivity(new Intent(getApplicationContext(),PrimaryUnitsActivity.class));
                             finish();
                             Toast.makeText(getApplicationContext(), "Thêm thành công", Toast.LENGTH_LONG).show();

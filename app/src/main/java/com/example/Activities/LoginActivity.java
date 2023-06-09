@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import com.example.API.ApiService;
 import com.example.DataManager;
+import com.example.Models.Materials;
 import com.example.Models.Users;
 import com.example.quanlysanxuat.R;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +39,22 @@ public class LoginActivity extends AppCompatActivity {
         Button loginbtn = findViewById(R.id.loginbtn);
         Button signup = findViewById(R.id.btn_login_signup);
 
+        if (DataManager.materialsList.size() == 0){
+            ApiService.api.GetMaterials().enqueue(new Callback<List<Materials>>() {
+                @Override
+                public void onResponse(Call<List<Materials>> call, Response<List<Materials>> response) {
+                    if(response.body() != null){
+                        DataManager.materialsList.addAll(response.body());
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Materials>> call, Throwable t) {
+
+                }
+            });
+        }
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,9 +96,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-    protected void moveToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
     }
 }

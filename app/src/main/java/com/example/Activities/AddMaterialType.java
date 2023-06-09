@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.API.ApiService;
+import com.example.DataManager;
 import com.example.Models.MaterialTypes;
 import com.example.quanlysanxuat.R;
 
@@ -61,6 +62,7 @@ public class AddMaterialType extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<MaterialTypes> call, Response<MaterialTypes> response) {
                         if (response.body()!=null) {
+                            DataManager.materialTypesList.add(materialTypes);
                             startActivity(new Intent(AddMaterialType.this, MaterialTypeActivity.class));
                             finish();
                             Toast.makeText(getApplicationContext(), "Thêm thành công", Toast.LENGTH_LONG).show();

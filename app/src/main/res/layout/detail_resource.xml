@@ -33,7 +33,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="20dp"
-            android:text="Detail Material"
+            android:text="Detail Resource"
             android:textColor="@color/dark_blue"
             android:textSize="30sp"
             android:textStyle="bold" />

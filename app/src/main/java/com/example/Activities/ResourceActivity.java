@@ -6,8 +6,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.API.ApiService;
@@ -29,15 +33,18 @@ public class ResourceActivity extends AppCompatActivity {
 
     private RecyclerView rcv_resource;
     private ResourceAdapter resourceAdapter;
-    private List<Resources> resourcesList;
     private ImageView btn_resource_backToHome, imgView_Add_Resource;
+    private EditText search_Resource;
+    private List<Resources> resourcesList;
+    private List<Resources> All;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_resource);
 
+        All = DataManager.resourcesList;
         initView();
         loadData();
         onClick();
@@ -47,7 +54,7 @@ public class ResourceActivity extends AppCompatActivity {
         btn_resource_backToHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 finish();
             }
         });
@@ -55,7 +62,7 @@ public class ResourceActivity extends AppCompatActivity {
         imgView_Add_Resource.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),AddResource.class));
+                startActivity(new Intent(getApplicationContext(), AddResource.class));
                 finish();
             }
         });
@@ -63,37 +70,45 @@ public class ResourceActivity extends AppCompatActivity {
         resourceAdapter.setOnClickListener(new ResourceAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int pos, View view) {
-                DataManager.selectedResource = resourcesList.get(pos);
-                startActivity(new Intent(getApplicationContext(),DetailResourceActivity.class));
+                DataManager.selectedResource = All.get(pos);
+                startActivity(new Intent(getApplicationContext(), DetailResourceActivity.class));
                 finish();
+            }
+        });
+        search_Resource.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                resourcesList =new ArrayList<>();
+                String resourceNameSearch = search_Resource.getText().toString();
+                for (int i = 0; i < DataManager.resourcesList.size(); i++){
+                    if (DataManager.resourcesList.get(i).getResourceName().toLowerCase().contains(resourceNameSearch.toLowerCase())){
+                        resourcesList.add(DataManager.resourcesList.get(i));
+                    }
+                }
+                All = resourcesList;
+                resourceAdapter.setData(All);
             }
         });
     }
 
     private void loadData() {
-        resourcesList = new ArrayList<>();
-        resourceAdapter = new ResourceAdapter(this, resourcesList);
+        resourceAdapter = new ResourceAdapter(this, DataManager.resourcesList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rcv_resource.setLayoutManager(linearLayoutManager);
         rcv_resource.setAdapter(resourceAdapter);
-
-        ApiService.api.GetResources().enqueue(new Callback<List<Resources>>() {
-            @Override
-            public void onResponse(Call<List<Resources>> call, Response<List<Resources>> response) {
-                resourcesList.addAll(response.body());
-                resourceAdapter.setData(resourcesList);
-            }
-
-            @Override
-            public void onFailure(Call<List<Resources>> call, Throwable t) {
-
-            }
-        });
+        resourceAdapter.setData(DataManager.resourcesList);
     }
 
     private void initView() {
         rcv_resource = findViewById(R.id.rcv_resource);
         btn_resource_backToHome = findViewById(R.id.btn_resource_backToHome);
         imgView_Add_Resource = findViewById(R.id.imgView_Add_Resource);
+        search_Resource = findViewById(R.id.search_Resource);
     }
 }

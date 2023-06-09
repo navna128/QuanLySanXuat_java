@@ -60,14 +60,18 @@ public class DetailResourceActivity extends AppCompatActivity {
                                 ApiService.api.DeleteResource(String.valueOf(DataManager.selectedResource.getIdResource())).enqueue(new Callback<Resources>() {
                                     @Override
                                     public void onResponse(Call<Resources> call, Response<Resources> response) {
+                                        if (response.isSuccessful()){
+                                            DataManager.resourcesList.remove(DataManager.selectedResource);
+                                            startActivity(new Intent(getApplicationContext(),ResourceActivity.class));
+                                            finish();
+                                        }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Resources> call, Throwable t) {
                                     }
                                 });
-                                startActivity(new Intent(getApplicationContext(),ResourceActivity.class));
-                                finish();
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -77,6 +81,13 @@ public class DetailResourceActivity extends AppCompatActivity {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+        btn_detail_go_to_edit_resource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),EditResourceActivity.class));
+                finish();
             }
         });
     }

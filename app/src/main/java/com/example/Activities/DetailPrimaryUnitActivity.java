@@ -61,14 +61,18 @@ public class DetailPrimaryUnitActivity extends AppCompatActivity {
                                 ApiService.api.DeletePrimaryUnit(DataManager.selectedPrimaryUnit.getIdPrimaryUnit()).enqueue(new Callback<PrimaryUnits>() {
                                     @Override
                                     public void onResponse(Call<PrimaryUnits> call, Response<PrimaryUnits> response) {
+                                        if (response.body() != null){
+                                            DataManager.primaryUnitsList.remove(DataManager.selectedPrimaryUnit);
+                                            startActivity(new Intent(getApplicationContext(),PrimaryUnitsActivity.class));
+                                            finish();
+                                        }
                                     }
 
                                     @Override
                                     public void onFailure(Call<PrimaryUnits> call, Throwable t) {
                                     }
                                 });
-                                startActivity(new Intent(getApplicationContext(),PrimaryUnitsActivity.class));
-                                finish();
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -78,6 +82,13 @@ public class DetailPrimaryUnitActivity extends AppCompatActivity {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+        btn_detail_go_to_edit_unit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),EditPrimaryUnitActivity.class));
+                finish();
             }
         });
     }

@@ -34,7 +34,6 @@ public class DetailMaterialActivity extends AppCompatActivity {
     private TextView txtView_detail_mat_id, txtView_detail_mat_name, txtView_detail_mat_description, txtView_detail_mat_quantity, txtView_detail_mat_status, txtView_detail_mat_unit, txtView_detail_mat_product, txtView_detail_mat_type;
     private Button btn_detail_delete_mat, btn_detail_go_to_edit_mat;
     private ImageView imgView_detail_mat_image, imgView_detail_back_to_mat;
-    private Context mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,15 +67,18 @@ public class DetailMaterialActivity extends AppCompatActivity {
                                 ApiService.api.DeleteMaterial(DataManager.selectedMaterial.getIdMaterial()).enqueue(new Callback<Materials>() {
                                     @Override
                                     public void onResponse(Call<Materials> call, Response<Materials> response) {
-
+                                        if (response.body()!=null){
+                                            DataManager.materialsList.remove(DataManager.selectedMaterial);
+                                            startActivity(new Intent(getApplicationContext(),MaterialActivity.class));
+                                            finish();
+                                        }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Materials> call, Throwable t) {
                                     }
                                 });
-                                startActivity(new Intent(getApplicationContext(),MaterialActivity.class));
-                                finish();
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -88,6 +90,13 @@ public class DetailMaterialActivity extends AppCompatActivity {
                 alertDialog.show();
 
 
+            }
+        });
+        btn_detail_go_to_edit_mat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), EditMaterialActivity.class));
+                finish();
             }
         });
     }
@@ -104,7 +113,8 @@ public class DetailMaterialActivity extends AppCompatActivity {
 
         if (DataManager.materialTypesList != null) {
             for (MaterialTypes materialTypes : DataManager.materialTypesList) {
-
+                Log.e("mat", "setData: " + DataManager.selectedMaterial.getIdType() );
+                Log.e("mat", "setData: " + materialTypes.getIdType() );
                 if (materialTypes.getIdType().equals(DataManager.selectedMaterial.getIdType())) {
                     txtView_detail_mat_type.setText(materialTypes.getTypeName());
 
@@ -128,7 +138,7 @@ public class DetailMaterialActivity extends AppCompatActivity {
                 }
             }
         }
-        if (DataManager.selectedMaterial.getMaterialIMG() != null) {
+        if (DataManager.selectedMaterial.getMaterialIMG().length() >0) {
             Glide.with(this).load(DataManager.selectedMaterial.getMaterialIMG()).override(400, 400).into(imgView_detail_mat_image);
         }
     }

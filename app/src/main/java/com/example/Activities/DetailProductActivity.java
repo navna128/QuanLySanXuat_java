@@ -59,14 +59,18 @@ public class DetailProductActivity extends AppCompatActivity {
                                 ApiService.api.DeleteProduct(DataManager.selectedProduct.getIdProduct()).enqueue(new Callback<Products>() {
                                     @Override
                                     public void onResponse(Call<Products> call, Response<Products> response) {
+                                        if (response.isSuccessful()){
+                                            DataManager.productsList.remove(DataManager.selectedProduct);
+                                            startActivity(new Intent(getApplicationContext(),ProductActivity.class));
+                                            finish();
+                                        }
                                     }
 
                                     @Override
                                     public void onFailure(Call<Products> call, Throwable t) {
                                     }
                                 });
-                                startActivity(new Intent(getApplicationContext(),ProductActivity.class));
-                                finish();
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -76,6 +80,13 @@ public class DetailProductActivity extends AppCompatActivity {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+        btn_detail_go_to_edit_product.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),EditProductAvtivity.class));
+                finish();
             }
         });
     }

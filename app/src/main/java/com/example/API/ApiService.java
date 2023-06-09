@@ -21,6 +21,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -95,4 +96,21 @@ public interface ApiService {
     @DELETE("api/Resources/DeleteResource")
     Call<Resources> DeleteResource(@Query("id") String id);
 
+    @PUT("api/Materials/PutMaterial")
+    Call<Void> PutMaterials(@Query("id") String id , @Body Materials materials);
+
+    @PUT("api/MaterialTypes/PutMaterialType")
+    Call<Void> PutMaterialType(@Query("id") String id , @Body MaterialTypes materialTypes);
+
+    @PUT("api/PrimaryUnits/PutPrimaryUnit")
+    Call<Void> PutPrimaryUnit(@Query("id") String id , @Body PrimaryUnits primaryUnits);
+
+    @PUT("api/Products/PutProduct")
+    Call<Void> PutProduct(@Query("id") String id , @Body Products products);
+
+    @PUT("api/Resources/PutResource")
+    Call<Void> PutResource(@Query("id") int id , @Body Resources resources);
+
+    @GET("api/Materials/SearchMaterial")
+    Call<Materials> SearchMaterial(@Query("materialName") String materialName, @Body List<Materials> materials);
 }

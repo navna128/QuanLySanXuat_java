@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.API.ApiService;
+import com.example.DataManager;
 import com.example.Models.Products;
 import com.example.quanlysanxuat.R;
 
@@ -61,6 +62,7 @@ public class AddProduct extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Products> call, Response<Products> response) {
                         if (response.body()!=null) {
+                            DataManager.productsList.add(products);
                             startActivity(new Intent(getApplicationContext(),ProductActivity.class));
                             finish();
                             Toast.makeText(getApplicationContext(), "Thêm thành công", Toast.LENGTH_LONG).show();
